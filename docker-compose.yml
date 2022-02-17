@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: node_fast8
+    image: node_fast8
+    restart: "always"
+    ports:
+      - "3320:3320"
+    networks:
+      - fast8_network
+    depends_on:
+      db:
+        condition: service_healthy
+    command: bash -c "npm run build:docker && cd build && node server.js"
+  db:
+    container_name: mysql
+    image: mysql:8.0
+    healthcheck:
+      test: "exit 0"
+    restart: "always"
+    environment:
+      MYSQL_ROOT_PASSWORD: 713320
+    ports:
+      - "3306:3306"
+    networks:
+      - fast8_network
+networks:
+  fast8_network:
+    name: fast8_network
